@@ -1,49 +1,59 @@
-# Karl's Paper Portfolio
+# Signalboard
 
-Paper trading dashboard tracking a 50/50 strategy over 12 months.
+A simple, self-hosted paper trading dashboard anyone can fork and run. Tracks a 50/50 strategy: one anchor ETF held long-term + up to 3 active momentum positions driven by MA20 crossover signals.
 
-**Live site:** https://karlmaximilienkohler.github.io/paper-portfolio
-
----
-
-## Strategy
-
-| Side | Ticker | Rule |
-|---|---|---|
-| Anchor (50%) | QQQ | Buy Aug 1, hold 12 months, never sell |
-| Active (50%) | NVDA, TSLA, META | MA20 crossover — buy when price crosses above 20-day moving average, sell when it crosses below |
-
-### Why MA20 crossover?
-
-The 20-day moving average crossover is one of the most well-studied simple trading signals. When a stock's price moves above its 20-day average, short-term momentum is positive. When it falls below, momentum is negative. It filters out daily noise while staying responsive enough for swing trading.
+**Demo:** https://karlmaximilienkohler.github.io/paper-portfolio
 
 ---
 
-## How to update data (daily)
+## How it works
 
-Find the `DATA` block in `index.html`'s `<script>` tag and update:
+- **No backend, no API keys, no cost** — one HTML file, hosted free on GitHub Pages
+- **Strategy:** 50% into QQQ (hold 12 months), 50% into NVDA/TSLA/META momentum trades
+- **Signal:** MA20 crossover — price crosses above 20-day moving average = BUY, crosses below = SELL
+- **Daily update:** edit the `DATA` block in `index.html`, push to GitHub, site updates instantly
+
+## Fork & deploy in 3 steps
+
+1. Fork this repo
+2. Go to **Settings → Pages → Deploy from branch → `main` → `/ (root)`**
+3. Your dashboard is live at `https://yourusername.github.io/paper-portfolio`
+
+## Update daily data
+
+Find the `DATA` block in `index.html` and fill in each stock:
 
 ```js
 const DATA = {
   lastUpdated: '2026-08-04',
   qqq: { price: 531.20 },
   stocks: {
-    nvda: { price: 148.30, chgPct: 1.83, ma20: 141.50, aboveMa: true,  crossedAbove: true,  crossedBelow: false },
-    tsla: { price: 312.40, chgPct: -2.1, ma20: 318.00, aboveMa: false, crossedAbove: false, crossedBelow: true  },
-    meta: { price: 628.00, chgPct: 0.74, ma20: 615.00, aboveMa: true,  crossedAbove: false, crossedBelow: false },
+    nvda: {
+      price: 148.30,
+      chgPct: 1.83,        // today's % change
+      ma20: 141.50,        // 20-day moving average
+      aboveMa: true,       // price > ma20?
+      crossedAbove: true,  // just crossed up today? → BUY
+      crossedBelow: false  // just crossed down today? → SELL
+    },
+    // tsla and meta follow the same shape
   }
 };
 ```
 
-- `crossedAbove: true` → **BUY** signal (only on the day it crosses up)
-- `crossedBelow: true` → **SELL** signal (only on the day it crosses down)
-- `aboveMa: true` → **HOLD** (above MA, already in position)
-- `aboveMa: false` → **WATCH** (below MA, no position)
+| Field | Meaning | Signal produced |
+|---|---|---|
+| `crossedAbove: true` | Price just went above MA20 | **BUY** |
+| `crossedBelow: true` | Price just went below MA20 | **SELL** |
+| `aboveMa: true` | Above MA20, no fresh cross | **HOLD** |
+| `aboveMa: false` | Below MA20, no fresh cross | **WATCH** |
 
----
+## Customize
 
-## Enable GitHub Pages
+- Change tickers by replacing NVDA/TSLA/META in the HTML (3 places each)
+- Change allocation by editing the `$550` / `$183` values in the plan table
+- Change the strategy label in the `DATA` comment block
 
-Settings → Pages → Deploy from branch → `main` → `/ (root)` → Save.
+## Stack
 
-Live at: `https://karlmaximilienkohler.github.io/paper-portfolio`
+Plain HTML + CSS + vanilla JS. No frameworks, no build step, no dependencies.
