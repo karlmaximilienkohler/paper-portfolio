@@ -5,117 +5,83 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Signalboard</title>
   <style>
-    :root {
-      --bg: #F4F5F8; --surface: #FFFFFF; --border: #D8DCE8; --border2: #ECEEF5;
-      --text-1: #111623; --text-2: #6B7185; --text-3: #B0B5C8;
-      --buy: #0A7B52; --buy-bg: #E8F5EF;
-      --sell: #C0202F; --sell-bg: #FAEAEA;
-      --hold: #1848D4; --hold-bg: #EEF2FD;
-      --watch: #5C6785; --watch-bg: #F0F1F5;
-    }
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --bg: #0C0F17; --surface: #131720; --border: #1E2333; --border2: #181C29;
-        --text-1: #E2E6F4; --text-2: #6B7490; --text-3: #2E3448;
-        --buy: #2ECC8A; --buy-bg: #0C2419;
-        --sell: #E8434E; --sell-bg: #2A0F11;
-        --hold: #4A7CFF; --hold-bg: #0D1A3A;
-        --watch: #7A83A8; --watch-bg: #13161F;
-      }
-    }
-    :root[data-theme="dark"] {
-      --bg: #0C0F17; --surface: #131720; --border: #1E2333; --border2: #181C29;
-      --text-1: #E2E6F4; --text-2: #6B7490; --text-3: #2E3448;
-      --buy: #2ECC8A; --buy-bg: #0C2419;
-      --sell: #E8434E; --sell-bg: #2A0F11;
-      --hold: #4A7CFF; --hold-bg: #0D1A3A;
-      --watch: #7A83A8; --watch-bg: #13161F;
-    }
-    :root[data-theme="light"] {
-      --bg: #F4F5F8; --surface: #FFFFFF; --border: #D8DCE8; --border2: #ECEEF5;
-      --text-1: #111623; --text-2: #6B7185; --text-3: #B0B5C8;
-      --buy: #0A7B52; --buy-bg: #E8F5EF;
-      --sell: #C0202F; --sell-bg: #FAEAEA;
-      --hold: #1848D4; --hold-bg: #EEF2FD;
-      --watch: #5C6785; --watch-bg: #F0F1F5;
-    }
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body { background: var(--bg); color: var(--text-1); font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; font-size: 14px; line-height: 1.5; min-height: 100vh; padding-bottom: 64px; }
-    header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 28px; height: 52px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 20; }
-    .h-left { display: flex; align-items: center; gap: 18px; }
-    .wordmark { font-size: 13px; font-weight: 700; letter-spacing: -0.01em; }
-    .h-div { width: 1px; height: 18px; background: var(--border); }
-    .h-meta { font-size: 12px; color: var(--text-2); }
-    .h-meta strong { color: var(--text-1); font-variant-numeric: tabular-nums; }
-    .h-right { display: flex; align-items: center; gap: 10px; }
-    .mkt-badge { display: flex; align-items: center; gap: 5px; padding: 3px 9px; border: 1px solid var(--border); font-size: 11px; font-weight: 500; }
-    .mkt-badge.open { color: var(--buy); border-color: var(--buy); }
-    .mkt-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
-    .mkt-badge.open .mkt-dot { animation: blink 2s ease-in-out infinite; }
-    @keyframes blink { 0%,100%{opacity:1}50%{opacity:.3} }
-    main { max-width: 1020px; margin: 0 auto; padding: 28px 20px 0; }
-    .hero { background: var(--surface); border: 1px solid var(--border); padding: 26px 30px; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; gap: 20px; }
-    .hero-eyebrow { font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-3); margin-bottom: 8px; }
-    .hero-signal { font-size: 38px; font-weight: 800; letter-spacing: -0.04em; line-height: 1; color: var(--text-3); }
-    .hero-signal.has-buys { color: var(--buy); }
-    .hero-signal.has-sells { color: var(--sell); }
-    .hero-sub { font-size: 12px; color: var(--text-2); margin-top: 8px; line-height: 1.6; }
-    .hero-stats { display: flex; gap: 28px; flex-shrink: 0; }
-    .stat { text-align: right; }
-    .stat-val { font-size: 22px; font-weight: 700; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
-    .stat-lbl { font-size: 10px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--text-3); margin-top: 2px; }
-    .section-label { font-size: 10px; font-weight: 700; letter-spacing: 0.13em; text-transform: uppercase; color: var(--text-3); margin: 0 0 10px; }
-    .top-strip { display: grid; grid-template-columns: 260px 1fr; gap: 16px; margin-bottom: 16px; align-items: start; }
-    @media (max-width: 640px) { .top-strip { grid-template-columns: 1fr; } }
-    .anchor-panel { background: var(--surface); border: 1px solid var(--border); padding: 20px; }
-    .a-ticker { font-size: 28px; font-weight: 800; letter-spacing: -0.04em; line-height: 1; }
-    .a-name { font-size: 11px; color: var(--text-2); margin-bottom: 16px; margin-top: 2px; }
-    .a-price { font-size: 20px; font-weight: 600; font-variant-numeric: tabular-nums; margin-bottom: 16px; }
-    .a-rows { display: flex; flex-direction: column; }
-    .a-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-top: 1px solid var(--border2); font-size: 12px; }
-    .a-row:last-child { border-bottom: 1px solid var(--border2); }
-    .a-rlbl { color: var(--text-2); text-transform: uppercase; letter-spacing: .06em; font-size: 10px; font-weight: 600; }
-    .a-rval { font-weight: 600; font-variant-numeric: tabular-nums; }
-    .a-note { margin-top: 14px; font-size: 11px; color: var(--text-2); line-height: 1.7; border-top: 1px solid var(--border2); padding-top: 12px; }
-    .budget-panel { background: var(--surface); border: 1px solid var(--border); padding: 20px; }
-    .b-row { display: flex; justify-content: space-between; align-items: center; padding: 9px 0; border-bottom: 1px solid var(--border2); font-size: 13px; }
-    .b-row:first-child { border-top: 1px solid var(--border2); }
-    .b-lbl { color: var(--text-2); font-size: 12px; }
-    .b-val { font-weight: 600; font-variant-numeric: tabular-nums; }
-    .b-val.green { color: var(--buy); }
-    .b-val.red { color: var(--sell); }
-    .scanner-note { margin-top: 14px; font-size: 11px; color: var(--text-2); line-height: 1.7; }
-    .scanner-note strong { color: var(--text-1); }
-    .signal-panel { background: var(--surface); border: 1px solid var(--border); margin-bottom: 16px; overflow: hidden; }
-    .sp-header { padding: 13px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
-    .sp-count { font-size: 11px; color: var(--text-2); }
-    table.signals { width: 100%; border-collapse: collapse; font-size: 13px; }
-    table.signals th { font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--text-3); padding: 8px 16px; text-align: left; border-bottom: 1px solid var(--border); white-space: nowrap; }
-    table.signals th.r { text-align: right; }
-    table.signals td { padding: 10px 16px; border-bottom: 1px solid var(--border2); vertical-align: middle; }
-    table.signals tr:last-child td { border-bottom: none; }
-    table.signals td.r { text-align: right; font-variant-numeric: tabular-nums; }
-    .tk { font-weight: 800; font-size: 14px; letter-spacing: -0.01em; }
-    .tk-name { font-size: 11px; color: var(--text-2); }
-    .chg-up { color: var(--buy); } .chg-dn { color: var(--sell); } .chg-fl { color: var(--text-2); }
-    .spread-bar { display: flex; align-items: center; gap: 8px; }
-    .sbar { width: 60px; height: 4px; background: var(--border2); position: relative; flex-shrink: 0; }
-    .sbar-fill { position: absolute; left: 0; top: 0; bottom: 0; background: var(--buy); }
-    .sbar-fill.neg { background: var(--sell); }
-    .spread-val { font-size: 12px; font-variant-numeric: tabular-nums; font-weight: 600; white-space: nowrap; }
-    .spread-val.pos { color: var(--buy); } .spread-val.neg { color: var(--sell); }
-    .tag { display: inline-block; padding: 3px 9px; font-size: 11px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; }
-    .tag.buy { background: var(--buy-bg); color: var(--buy); }
-    .tag.sell { background: var(--sell-bg); color: var(--sell); }
-    .tag.hold { background: var(--hold-bg); color: var(--hold); }
-    .empty-state { padding: 40px 20px; text-align: center; color: var(--text-3); font-size: 13px; }
-    .positions-panel { background: var(--surface); border: 1px solid var(--border); margin-bottom: 16px; overflow: hidden; }
-    .guide { background: var(--surface); border: 1px solid var(--border); padding: 20px 26px; }
-    .guide-steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 18px; margin-top: 14px; }
-    .guide-step { font-size: 12px; color: var(--text-2); line-height: 1.6; }
-    .sn { font-size: 9px; font-weight: 800; letter-spacing: .1em; color: var(--hold); margin-bottom: 4px; }
-    .guide-step strong { color: var(--text-1); }
-    .updated-tag { display: inline-flex; align-items: center; gap: 5px; font-size: 10px; color: var(--text-3); padding: 2px 7px; border: 1px solid var(--border2); }
+    :root{--bg:#F4F5F8;--surface:#FFFFFF;--border:#D8DCE8;--border2:#ECEEF5;--text-1:#111623;--text-2:#6B7185;--text-3:#B0B5C8;--buy:#0A7B52;--buy-bg:#E8F5EF;--sell:#C0202F;--sell-bg:#FAEAEA;--hold:#1848D4;--hold-bg:#EEF2FD;--watch:#5C6785;--watch-bg:#F0F1F5;}
+    @media(prefers-color-scheme:dark){:root{--bg:#0C0F17;--surface:#131720;--border:#1E2333;--border2:#181C29;--text-1:#E2E6F4;--text-2:#6B7490;--text-3:#2E3448;--buy:#2ECC8A;--buy-bg:#0C2419;--sell:#E8434E;--sell-bg:#2A0F11;--hold:#4A7CFF;--hold-bg:#0D1A3A;--watch:#7A83A8;--watch-bg:#13161F;}}
+    :root[data-theme="dark"]{--bg:#0C0F17;--surface:#131720;--border:#1E2333;--border2:#181C29;--text-1:#E2E6F4;--text-2:#6B7490;--text-3:#2E3448;--buy:#2ECC8A;--buy-bg:#0C2419;--sell:#E8434E;--sell-bg:#2A0F11;--hold:#4A7CFF;--hold-bg:#0D1A3A;--watch:#7A83A8;--watch-bg:#13161F;}
+    :root[data-theme="light"]{--bg:#F4F5F8;--surface:#FFFFFF;--border:#D8DCE8;--border2:#ECEEF5;--text-1:#111623;--text-2:#6B7185;--text-3:#B0B5C8;--buy:#0A7B52;--buy-bg:#E8F5EF;--sell:#C0202F;--sell-bg:#FAEAEA;--hold:#1848D4;--hold-bg:#EEF2FD;--watch:#5C6785;--watch-bg:#F0F1F5;}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    body{background:var(--bg);color:var(--text-1);font-family:system-ui,-apple-system,'Segoe UI',sans-serif;font-size:14px;line-height:1.5;min-height:100vh;padding-bottom:64px;}
+    header{background:var(--surface);border-bottom:1px solid var(--border);padding:0 28px;height:52px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:20;}
+    .h-left{display:flex;align-items:center;gap:18px;}
+    .wordmark{font-size:13px;font-weight:700;letter-spacing:-0.01em;}
+    .h-div{width:1px;height:18px;background:var(--border);}
+    .h-meta{font-size:12px;color:var(--text-2);}
+    .h-meta strong{color:var(--text-1);font-variant-numeric:tabular-nums;}
+    .h-right{display:flex;align-items:center;gap:10px;}
+    .mkt-badge{display:flex;align-items:center;gap:5px;padding:3px 9px;border:1px solid var(--border);font-size:11px;font-weight:500;}
+    .mkt-badge.open{color:var(--buy);border-color:var(--buy);}
+    .mkt-dot{width:6px;height:6px;border-radius:50%;background:currentColor;flex-shrink:0;}
+    .mkt-badge.open .mkt-dot{animation:blink 2s ease-in-out infinite;}
+    @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+    main{max-width:1020px;margin:0 auto;padding:28px 20px 0;}
+    .hero{background:var(--surface);border:1px solid var(--border);padding:26px 30px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;gap:20px;}
+    .hero-eyebrow{font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--text-3);margin-bottom:8px;}
+    .hero-signal{font-size:38px;font-weight:800;letter-spacing:-0.04em;line-height:1;color:var(--text-3);}
+    .hero-signal.has-buys{color:var(--buy);}.hero-signal.has-sells{color:var(--sell);}
+    .hero-sub{font-size:12px;color:var(--text-2);margin-top:8px;line-height:1.6;}
+    .hero-stats{display:flex;gap:28px;flex-shrink:0;}
+    .stat{text-align:right;}
+    .stat-val{font-size:22px;font-weight:700;letter-spacing:-0.03em;font-variant-numeric:tabular-nums;}
+    .stat-lbl{font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--text-3);margin-top:2px;}
+    .section-label{font-size:10px;font-weight:700;letter-spacing:0.13em;text-transform:uppercase;color:var(--text-3);margin:0 0 10px;}
+    .top-strip{display:grid;grid-template-columns:260px 1fr;gap:16px;margin-bottom:16px;align-items:start;}
+    @media(max-width:640px){.top-strip{grid-template-columns:1fr;}}
+    .anchor-panel{background:var(--surface);border:1px solid var(--border);padding:20px;}
+    .a-ticker{font-size:28px;font-weight:800;letter-spacing:-0.04em;line-height:1;}
+    .a-name{font-size:11px;color:var(--text-2);margin-bottom:16px;margin-top:2px;}
+    .a-price{font-size:20px;font-weight:600;font-variant-numeric:tabular-nums;margin-bottom:16px;}
+    .a-rows{display:flex;flex-direction:column;}
+    .a-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-top:1px solid var(--border2);font-size:12px;}
+    .a-row:last-child{border-bottom:1px solid var(--border2);}
+    .a-rlbl{color:var(--text-2);text-transform:uppercase;letter-spacing:.06em;font-size:10px;font-weight:600;}
+    .a-rval{font-weight:600;font-variant-numeric:tabular-nums;}
+    .a-note{margin-top:14px;font-size:11px;color:var(--text-2);line-height:1.7;border-top:1px solid var(--border2);padding-top:12px;}
+    .budget-panel{background:var(--surface);border:1px solid var(--border);padding:20px;}
+    .b-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--border2);font-size:13px;}
+    .b-row:first-child{border-top:1px solid var(--border2);}
+    .b-lbl{color:var(--text-2);font-size:12px;}
+    .b-val{font-weight:600;font-variant-numeric:tabular-nums;}
+    .b-val.green{color:var(--buy);}.b-val.red{color:var(--sell);}
+    .scanner-note{margin-top:14px;font-size:11px;color:var(--text-2);line-height:1.7;}
+    .scanner-note strong{color:var(--text-1);}
+    .signal-panel{background:var(--surface);border:1px solid var(--border);margin-bottom:16px;overflow:hidden;}
+    .sp-header{padding:13px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
+    .sp-count{font-size:11px;color:var(--text-2);}
+    table.signals{width:100%;border-collapse:collapse;font-size:13px;}
+    table.signals th{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-3);padding:8px 16px;text-align:left;border-bottom:1px solid var(--border);white-space:nowrap;}
+    table.signals th.r{text-align:right;}
+    table.signals td{padding:10px 16px;border-bottom:1px solid var(--border2);vertical-align:middle;}
+    table.signals tr:last-child td{border-bottom:none;}
+    table.signals td.r{text-align:right;font-variant-numeric:tabular-nums;}
+    .tk{font-weight:800;font-size:14px;letter-spacing:-0.01em;}
+    .tk-name{font-size:11px;color:var(--text-2);}
+    .chg-up{color:var(--buy);}.chg-dn{color:var(--sell);}.chg-fl{color:var(--text-2);}
+    .spread-bar{display:flex;align-items:center;gap:8px;}
+    .sbar{width:60px;height:4px;background:var(--border2);position:relative;flex-shrink:0;}
+    .sbar-fill{position:absolute;left:0;top:0;bottom:0;background:var(--buy);}
+    .sbar-fill.neg{background:var(--sell);}
+    .spread-val{font-size:12px;font-variant-numeric:tabular-nums;font-weight:600;white-space:nowrap;}
+    .spread-val.pos{color:var(--buy);}.spread-val.neg{color:var(--sell);}
+    .tag{display:inline-block;padding:3px 9px;font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;}
+    .tag.buy{background:var(--buy-bg);color:var(--buy);}.tag.sell{background:var(--sell-bg);color:var(--sell);}.tag.hold{background:var(--hold-bg);color:var(--hold);}
+    .empty-state{padding:40px 20px;text-align:center;color:var(--text-3);font-size:13px;}
+    .positions-panel{background:var(--surface);border:1px solid var(--border);margin-bottom:16px;overflow:hidden;}
+    .guide{background:var(--surface);border:1px solid var(--border);padding:20px 26px;}
+    .guide-steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:18px;margin-top:14px;}
+    .guide-step{font-size:12px;color:var(--text-2);line-height:1.6;}
+    .sn{font-size:9px;font-weight:800;letter-spacing:.1em;color:var(--hold);margin-bottom:4px;}
+    .guide-step strong{color:var(--text-1);}
+    .updated-tag{display:inline-flex;align-items:center;gap:5px;font-size:10px;color:var(--text-3);padding:2px 7px;border:1px solid var(--border2);}
   </style>
 </head>
 <body>
@@ -123,7 +89,7 @@
   <div class="h-left">
     <span class="wordmark">Signalboard</span>
     <div class="h-div"></div>
-    <span class="h-meta">Paper &mdash; <strong id="equityEl">&euro;1,000.00</strong></span>
+    <span class="h-meta">Paper &mdash; <strong>&euro;1,000.00</strong></span>
   </div>
   <div class="h-right">
     <div class="mkt-badge" id="mktBadge"><div class="mkt-dot"></div><span id="mktText">&mdash;</span></div>
@@ -133,14 +99,14 @@
 <main>
   <div class="hero">
     <div>
-      <div class="hero-eyebrow">Latest scan &mdash; Russell 1000</div>
-      <div class="hero-signal" id="heroSignal">STANDBY</div>
-      <div class="hero-sub" id="heroSub">No scan has been run yet. Ask Claude to scan and signals will appear here.</div>
+      <div class="hero-eyebrow">Scan &mdash; Jul 24 close &mdash; 93 stocks checked</div>
+      <div class="hero-signal has-buys" id="heroSignal">3 BUYS</div>
+      <div class="hero-sub" id="heroSub">3 stocks crossed above MA20 on Jul 24. Top pick: TGT at +1.6% above its 20-day average. Trading starts August 1st.</div>
     </div>
     <div class="hero-stats">
-      <div class="stat"><div class="stat-val" id="statBuys" style="color:var(--buy)">&mdash;</div><div class="stat-lbl">Buy signals</div></div>
-      <div class="stat"><div class="stat-val" id="statSells" style="color:var(--sell)">&mdash;</div><div class="stat-lbl">Sell signals</div></div>
-      <div class="stat"><div class="stat-val" id="statScanned" style="color:var(--text-2)">&mdash;</div><div class="stat-lbl">Scanned</div></div>
+      <div class="stat"><div class="stat-val" style="color:var(--buy)">3</div><div class="stat-lbl">Buy signals</div></div>
+      <div class="stat"><div class="stat-val" style="color:var(--sell)">4</div><div class="stat-lbl">Sell signals</div></div>
+      <div class="stat"><div class="stat-val" style="color:var(--text-2)">93</div><div class="stat-lbl">Scanned</div></div>
     </div>
   </div>
   <div class="top-strip">
@@ -149,10 +115,10 @@
         <div class="section-label">Anchor &mdash; hold all year</div>
         <div class="a-ticker">QQQ</div>
         <div class="a-name">Invesco Nasdaq 100 ETF</div>
-        <div class="a-price" id="qqqPrice">$&mdash;</div>
+        <div class="a-price">$684.23</div>
         <div class="a-rows">
           <div class="a-row"><span class="a-rlbl">Budget</span><span class="a-rval">&euro;500</span></div>
-          <div class="a-row"><span class="a-rlbl">Est. shares</span><span class="a-rval" id="qqqShares">&mdash;</span></div>
+          <div class="a-row"><span class="a-rlbl">Est. shares</span><span class="a-rval">~0 shares</span></div>
           <div class="a-row"><span class="a-rlbl">Action</span><span class="tag buy">Buy Aug 1</span></div>
           <div class="a-row"><span class="a-rlbl">Hold until</span><span class="a-rval">Aug 2027</span></div>
         </div>
@@ -163,33 +129,39 @@
       <div class="budget-panel">
         <div class="section-label">Active budget</div>
         <div class="b-row"><span class="b-lbl">Total active budget</span><span class="b-val">&euro;500</span></div>
-        <div class="b-row"><span class="b-lbl">In open positions</span><span class="b-val" id="deployed">&euro;0</span></div>
-        <div class="b-row"><span class="b-lbl">Available to deploy</span><span class="b-val green" id="available">&euro;500</span></div>
-        <div class="b-row"><span class="b-lbl">Open positions</span><span class="b-val" id="posCount">0</span></div>
-        <p class="scanner-note"><strong>How this works:</strong> Claude scans all 1,000 Russell stocks for MA20 crossovers. Stocks crossing <em>above</em> their 20-day average = BUY signal. Crossing <em>below</em> = SELL. You place orders manually on Alpaca paper. Ask Claude to &ldquo;run a scan&rdquo; any time.</p>
+        <div class="b-row"><span class="b-lbl">In open positions</span><span class="b-val">&euro;0</span></div>
+        <div class="b-row"><span class="b-lbl">Available to deploy</span><span class="b-val green">&euro;500</span></div>
+        <div class="b-row"><span class="b-lbl">Open positions</span><span class="b-val">0</span></div>
+        <p class="scanner-note"><strong>Practice scan only.</strong> Real trading starts August 1st. When a BUY signal appears, go to Alpaca paper, search the ticker, place a market buy. Tell Claude what you bought to track it here.</p>
       </div>
     </div>
   </div>
-  <div class="positions-panel" id="positionsSection">
-    <div class="sp-header">
-      <div class="section-label" style="margin:0">Your positions</div>
-      <span class="updated-tag" id="posUpdated">&mdash;</span>
-    </div>
-    <div id="positionsBody"><div class="empty-state">No open positions yet. Start August 1st.</div></div>
+  <div class="positions-panel">
+    <div class="sp-header"><div class="section-label" style="margin:0">Your positions</div><span class="updated-tag">Starts Aug 1</span></div>
+    <div><div class="empty-state">No positions yet. Trading starts August 1st &mdash; buy QQQ anchor first.</div></div>
   </div>
   <div class="signal-panel">
-    <div class="sp-header">
-      <div class="section-label" style="margin:0">BUY signals &mdash; crossed above MA20</div>
-      <span class="sp-count" id="buyCount">&mdash;</span>
-    </div>
-    <div id="buyBody"><div class="empty-state">Run a scan to see today&rsquo;s buy signals.</div></div>
+    <div class="sp-header"><div class="section-label" style="margin:0">BUY signals &mdash; crossed above MA20</div><span class="sp-count">3 stocks &mdash; Jul 24 close</span></div>
+    <table class="signals">
+      <thead><tr><th>#</th><th>Ticker</th><th class="r">Price</th><th class="r">Day chg</th><th class="r">MA20</th><th>vs MA20</th><th>Signal</th></tr></thead>
+      <tbody>
+        <tr><td style="color:var(--text-3);font-size:11px;width:32px">1</td><td><div class="tk">TGT</div><div class="tk-name">Target Corp</div></td><td class="r">$136.78</td><td class="r"><span class="chg-up">+1.71%</span></td><td class="r">$134.65</td><td><div class="spread-bar"><div class="sbar"><div class="sbar-fill" style="width:20%"></div></div><span class="spread-val pos">+1.6%</span></div></td><td><span class="tag buy">Buy</span></td></tr>
+        <tr><td style="color:var(--text-3);font-size:11px;width:32px">2</td><td><div class="tk">LLY</div><div class="tk-name">Eli Lilly And Co</div></td><td class="r">$1,196.03</td><td class="r"><span class="chg-up">+0.86%</span></td><td class="r">$1,190.33</td><td><div class="spread-bar"><div class="sbar"><div class="sbar-fill" style="width:6%"></div></div><span class="spread-val pos">+0.5%</span></div></td><td><span class="tag buy">Buy</span></td></tr>
+        <tr><td style="color:var(--text-3);font-size:11px;width:32px">3</td><td><div class="tk">AMT</div><div class="tk-name">American Tower Corp</div></td><td class="r">$166.67</td><td class="r"><span class="chg-fl">+0.00%</span></td><td class="r">$166.54</td><td><div class="spread-bar"><div class="sbar"><div class="sbar-fill" style="width:1%"></div></div><span class="spread-val pos">+0.1%</span></div></td><td><span class="tag buy">Buy</span></td></tr>
+      </tbody>
+    </table>
   </div>
   <div class="signal-panel">
-    <div class="sp-header">
-      <div class="section-label" style="margin:0">SELL signals &mdash; crossed below MA20</div>
-      <span class="sp-count" id="sellCount">&mdash;</span>
-    </div>
-    <div id="sellBody"><div class="empty-state">Run a scan to see sell signals.</div></div>
+    <div class="sp-header"><div class="section-label" style="margin:0">SELL signals &mdash; crossed below MA20</div><span class="sp-count">4 stocks &mdash; Jul 24 close</span></div>
+    <table class="signals">
+      <thead><tr><th>Ticker</th><th class="r">Price</th><th class="r">Day chg</th><th class="r">MA20</th><th>vs MA20</th><th>Signal</th></tr></thead>
+      <tbody>
+        <tr><td><div class="tk">NET</div><div class="tk-name">Cloudflare Inc</div></td><td class="r">$262.15</td><td class="r"><span class="chg-up">+0.00%</span></td><td class="r">$263.08</td><td><div class="spread-bar"><div class="sbar"><div class="sbar-fill neg" style="width:4%"></div></div><span class="spread-val neg">&minus;0.4%</span></div></td><td><span class="tag sell">Sell</span></td></tr>
+        <tr><td><div class="tk">HUBS</div><div class="tk-name">HubSpot Inc</div></td><td class="r">$204.89</td><td class="r"><span class="chg-up">+0.00%</span></td><td class="r">$205.15</td><td><div class="spread-bar"><div class="sbar"><div class="sbar-fill neg" style="width:2%"></div></div><span class="spread-val neg">&minus;0.1%</span></div></td><td><span class="tag sell">Sell</span></td></tr>
+        <tr><td><div class="tk">GS</div><div class="tk-name">Goldman Sachs Group Inc</div></td><td class="r">$1,061.23</td><td class="r"><span class="chg-dn">&minus;0.00%</span></td><td class="r">$1,062.29</td><td><div class="spread-bar"><div class="sbar"><div class="sbar-fill neg" style="width:1%"></div></div><span class="spread-val neg">&minus;0.1%</span></div></td><td><span class="tag sell">Sell</span></td></tr>
+        <tr><td><div class="tk">AVGO</div><div class="tk-name">Broadcom Inc</div></td><td class="r">$381.92</td><td class="r"><span class="chg-up">+0.79%</span></td><td class="r">$382.25</td><td><div class="spread-bar"><div class="sbar"><div class="sbar-fill neg" style="width:1%"></div></div><span class="spread-val neg">&minus;0.1%</span></div></td><td><span class="tag sell">Sell</span></td></tr>
+      </tbody>
+    </table>
   </div>
   <div class="guide">
     <div class="section-label" style="margin:0">How to place an order &mdash; Alpaca Paper Trading</div>
@@ -202,37 +174,11 @@
   </div>
 </main>
 <script>
-const DATA = {
-  lastScanned: null,
-  scannedCount: 0,
-  anchor: { price: 684.23 },
-  positions: [],
-  buys: [],
-  sells: []
-};
 function marketOpen(){const ny=new Date(new Date().toLocaleString('en-US',{timeZone:'America/New_York'}));const d=ny.getDay(),m=ny.getHours()*60+ny.getMinutes();return d>=1&&d<=5&&m>=570&&m<960;}
 const open=marketOpen();
 document.getElementById('mktText').textContent=open?'Market open':'Market closed';
 if(open)document.getElementById('mktBadge').classList.add('open');
 document.getElementById('hDate').textContent=new Date().toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',timeZone:'America/New_York'});
-if(DATA.anchor.price){document.getElementById('qqqPrice').textContent='$'+DATA.anchor.price.toFixed(2);document.getElementById('qqqShares').textContent='~'+Math.floor(500/DATA.anchor.price)+' shares';}
-const hero=document.getElementById('heroSignal'),heroSub=document.getElementById('heroSub');
-document.getElementById('statBuys').textContent=DATA.lastScanned?DATA.buys.length:'—';
-document.getElementById('statSells').textContent=DATA.lastScanned?DATA.sells.length:'—';
-document.getElementById('statScanned').textContent=DATA.scannedCount||'—';
-if(!DATA.lastScanned){hero.textContent='STANDBY';heroSub.textContent='No scan yet. Ask Claude to run a scan and signals will appear here.';}
-else if(DATA.buys.length>0){hero.textContent=DATA.buys.length+' BUY'+(DATA.buys.length>1?'S':'');hero.classList.add('has-buys');heroSub.textContent=DATA.buys.length+' stock'+(DATA.buys.length>1?'s':'')+' crossed above MA20 on '+DATA.lastScanned+'. Top picks ranked below.';}
-else if(DATA.sells.length>0){hero.textContent=DATA.sells.length+' SELL'+(DATA.sells.length>1?'S':'');hero.classList.add('has-sells');heroSub.textContent='No new buys. '+DATA.sells.length+' crossed below MA20 — consider exiting.';}
-else{hero.textContent='HOLD';heroSub.textContent='Scan ran on '+DATA.lastScanned+'. No crossovers today. Sit tight.';}
-const deployed=DATA.positions.reduce((s,p)=>s+(p.invested||0),0);
-document.getElementById('deployed').textContent='€'+deployed.toFixed(0);
-document.getElementById('available').textContent='€'+(500-deployed).toFixed(0);
-document.getElementById('available').className='b-val '+(deployed<500?'green':'red');
-document.getElementById('posCount').textContent=DATA.positions.length;
-function spreadBar(pct,isBuy){const fill=Math.min(Math.abs(pct)/8*100,100);return '<div class="spread-bar"><div class="sbar"><div class="sbar-fill'+(isBuy?'':' neg')+'" style="width:'+fill+'%"></div></div><span class="spread-val '+(isBuy?'pos':'neg')+'">'+(pct>=0?'+':'')+pct.toFixed(1)+'%</span></div>';}
-if(DATA.positions.length>0){const rows=DATA.positions.map(p=>{const pnl=p.currentPrice&&p.entryPrice?((p.currentPrice-p.entryPrice)/p.entryPrice*100):null;return '<tr><td><div class="tk">'+p.ticker+'</div><div class="tk-name">'+(p.name||'')+'</div></td><td class="r">$'+(p.entryPrice?p.entryPrice.toFixed(2):'—')+'</td><td class="r">$'+(p.currentPrice?p.currentPrice.toFixed(2):'—')+'</td><td class="r">'+(pnl!==null?'<span class="'+(pnl>=0?'chg-up':'chg-dn')+'">'+(pnl>=0?'+':'')+pnl.toFixed(2)+'%</span>':'—')+'</td><td class="r">€'+(p.invested?p.invested.toFixed(0):'—')+'</td><td class="r">'+(p.aboveMa?'<span class="tag hold">Hold</span>':'<span class="tag sell">⚠ Exit</span>')+'</td></tr>';}).join('');document.getElementById('positionsBody').innerHTML='<table class="signals"><thead><tr><th>Ticker</th><th class="r">Entry</th><th class="r">Current</th><th class="r">P&L</th><th class="r">Invested</th><th class="r">Signal</th></tr></thead><tbody>'+rows+'</tbody></table>';document.getElementById('posUpdated').textContent=DATA.lastScanned||'—';}
-if(DATA.buys.length>0){document.getElementById('buyCount').textContent=DATA.buys.length+' stocks';const rows=DATA.buys.map((s,i)=>'<tr><td style="color:var(--text-3);font-size:11px;width:32px">'+(i+1)+'</td><td><div class="tk">'+s.ticker+'</div><div class="tk-name">'+(s.name||'')+'</div></td><td class="r">$'+s.price.toFixed(2)+'</td><td class="r"><span class="'+(s.chgPct>=0?'chg-up':'chg-dn')+'">'+(s.chgPct>=0?'+':'')+s.chgPct.toFixed(2)+'%</span></td><td class="r">$'+s.ma20.toFixed(2)+'</td><td>'+spreadBar(s.spreadPct,true)+'</td><td><span class="tag buy">Buy</span></td></tr>').join('');document.getElementById('buyBody').innerHTML='<table class="signals"><thead><tr><th>#</th><th>Ticker</th><th class="r">Price</th><th class="r">Day chg</th><th class="r">MA20</th><th>vs MA20</th><th>Signal</th></tr></thead><tbody>'+rows+'</tbody></table>';}else if(DATA.lastScanned){document.getElementById('buyBody').innerHTML='<div class="empty-state">No crossovers today.</div>';}
-if(DATA.sells.length>0){document.getElementById('sellCount').textContent=DATA.sells.length+' stocks';const rows=DATA.sells.map(s=>'<tr><td><div class="tk">'+s.ticker+'</div><div class="tk-name">'+(s.name||'')+'</div></td><td class="r">$'+s.price.toFixed(2)+'</td><td class="r"><span class="'+(s.chgPct>=0?'chg-up':'chg-dn')+'">'+(s.chgPct>=0?'+':'')+s.chgPct.toFixed(2)+'%</span></td><td class="r">$'+s.ma20.toFixed(2)+'</td><td>'+spreadBar(s.spreadPct,false)+'</td><td><span class="tag sell">Sell</span></td></tr>').join('');document.getElementById('sellBody').innerHTML='<table class="signals"><thead><tr><th>Ticker</th><th class="r">Price</th><th class="r">Day chg</th><th class="r">MA20</th><th>vs MA20</th><th>Signal</th></tr></thead><tbody>'+rows+'</tbody></table>';}else if(DATA.lastScanned){document.getElementById('sellBody').innerHTML='<div class="empty-state">No stocks crossed below MA20 today.</div>';}
 </script>
 </body>
 </html>
